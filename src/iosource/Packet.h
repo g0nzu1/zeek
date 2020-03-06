@@ -19,8 +19,10 @@ class RecordVal;
 
 /**
  * The Layer 3 type of a packet, as determined by the parsing code in Packet.
+ * This enum is sized as an int32_t to make the Packet structure align
+ * correctly.
  */
-enum Layer3Proto {
+enum Layer3Proto : int32_t {
 	L3_UNKNOWN = -1,	/// Layer 3 type could not be determined.
 	L3_IPV4 = 1,	/// Layer 3 is IPv4.
 	L3_IPV6 = 2,	/// Layer 3 is IPv6.
@@ -110,7 +112,7 @@ public:
 	 * Returns true if parsing the layer 2 fields failed, including when
 	 * no data was passed into the constructor in the first place.
 	 */
-	bool Layer2Valid()
+	bool Layer2Valid() const
 		{
 		return l2_valid;
 		}
@@ -191,13 +193,13 @@ public:
 	 * (Outermost) VLAN tag if any, else 0. Valid iff Layer2Valid()
 	 * returns true.
 	 */
-	uint32_t vlan;
+	uint16_t vlan;
 
 	/**
 	 * (Innermost) VLAN tag if any, else 0. Valid iff Layer2Valid()
 	 * returns true.
 	 */
-	uint32_t inner_vlan;
+	uint16_t inner_vlan;
 
 	/**
 	 * Indicates whether the layer 2 checksum was validated by the
@@ -212,14 +214,14 @@ public:
 	bool l3_checksummed;
 
 private:
-	// Calculate layer 2 attributes. Sets
+	// Calculate layer 2 attributes.
 	void ProcessLayer2();
 
 	// Wrapper to generate a packet-level weird.
 	void Weird(const char* name);
 
 	// Renders an MAC address into its ASCII representation.
-	Val *FmtEUI48(const u_char *mac) const;
+	Val* FmtEUI48(const u_char *mac) const;
 
 	// True if we need to delete associated packet memory upon
 	// destruction.
